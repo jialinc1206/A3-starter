@@ -12,7 +12,7 @@
 # Run make clean to clean objects
 
 EXE = poll_lookup
-OBJS = poll_lookup.o parse_opts.o strip_date.o hash.o print_info.o node_lookup.o 
+OBJS = poll_lookup.o parse_opts.o strip_date.o hash.o node_lookup.o 
 CC = gcc
 DEBUG = -g
 WARN = -Wall -Wextra

@@ -143,6 +143,20 @@ int load_table(node **table, unsigned long size, char *filename) {
 }
 
 /*
+ * print_info
+ *
+ * Arguments: pointer to a hash table, number of elements
+ */
+void print_info(node **table, unsigned long size) {
+  // TODO: Implement print_info
+  printf("Table size: %lu\n", /* TODO */);
+  printf("Total entries: %lu\n", /* TODO */);
+  printf("Longest chain: %lu\n", /* TODO */);
+  printf("Shortest chain: %lu\n", /* TODO */);
+  printf("Empty buckets: %lu\n", /* TODO */);
+}
+
+/*
  * delete_date
  * Delete all nodes associated with a given date of form YYYY-MM-DD
  * All leading zeros have been removed in the date string
