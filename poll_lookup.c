@@ -1,6 +1,6 @@
 /*
  * CSE30 Summer Session 1 '22 HW3
- * CSE30 username: cs30su122xxx (TODO: Fill in)
+ * CSE30 username: cs30s122dv (TODO: Fill in)
  */
 
 #include "poll_lookup.h"
@@ -111,7 +111,22 @@ unsigned long hash(char *str) {
 node *add_node(node *front, int year, int month, int day, int hour, int pm25,
     int temp) {
   // TODO: Implement add_node
-  return NULL;
+  node *newNode = malloc(sizeof(node));
+  if(newNode == NULL) {
+    return NULL;
+  }
+  newNode -> year = year;
+  newNode -> month = month;
+  newNode -> day = day;
+  newNode -> hour = hour;
+  newNode -> pm25 = pm25;
+  newNode -> temp = temp;
+  
+  if(front -> next != NULL) {
+    newNode -> next = front -> next;
+  }
+  front -> next = newNode -> next;
+  return newNode;
 }
 
 /*
@@ -123,6 +138,7 @@ node *add_node(node *front, int year, int month, int day, int hour, int pm25,
  */
 void print_date_stats(node **table, unsigned long size, char *datestr) {
   // TODO: Implement print_data_stats
+  
   // Use the following formatting strings to print messages.
   printf("Unable to find any data for the date %s.\n", /* TODO */);
   printf("Minimum pm2.5: %d\tMaximum pm2.5: %d\tAverage pm2.5: %d\n",
@@ -139,6 +155,55 @@ void print_date_stats(node **table, unsigned long size, char *datestr) {
  */
 int load_table(node **table, unsigned long size, char *filename) {
   // TODO: Implement load_table
+  // read from txt
+  char *buffer = NULL;		// pointer to stirng
+	//char* table[TABLE_SIZE];
+  size_t bufsize = 99;
+  int line[6];
+
+	// read input 1st line
+  buffer = (char *)malloc(bufsize * sizeof(char));
+  if(buffer == NULL)
+  {
+    perror("load_table malloc");
+    exit(1);
+  }
+  
+  if(fgets(buffer, LINE_SIZE, filename) == NULL) {
+    perror("load_table filename open");
+    free(buffer);
+    exit(1);
+  }
+
+  char *token = strtok(buffer, ",");
+  int c = 0;
+
+
+  while(token != NULL) {
+    if(strcmp(token, "NA") == 0)
+      token = "0";
+    line[c] = atoi(token);
+    token = strtok(NULL, ",");
+    c++;
+  }
+  c = 0;
+
+  while(fgets(buffer, 100, tmpf) != NULL) {
+    token = strtok(buffer, ",");
+      while(token != NULL) {
+        if(strcmp(token, "NA") == 0) {
+          token = "0";
+        }
+
+      line[c] = atoi(token);
+      token = strtok(NULL, ",");
+      c++;
+      } 
+    printf("load_table duplicate entry: %d-%d-%d %d\n", line[0], line[1], line[2], line[3]);
+    c = 0;
+  }
+
+  free(buffer);
   return 0;
 }
 

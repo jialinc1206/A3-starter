@@ -35,6 +35,19 @@ hashFun:
     // TODO: Write your code here to implement the hash function.
     // For reference, the C implementation is shown here:
     // hash = c + (hash << 6) + (hash << 16) - hash;
+    str r0, [fp, #-4]
+    str r1, [fp, #-8]
+    ldr r2, [fp, #-8]
+    ldr r3, [fp, #-8]
+    lsl r2, r2, #6
+    lsl r3, r3, #16
+    ldr r4, [fp, #-4]
+    ldr r5, [fp, #-4]
+    add r4, r4, r2
+    add r4, r4, r3
+    sub r4, r4, r5
+    mov r0, r4
+    
 
     /////////////////////////////////////////////////////////
     // do not edit the epilogue below

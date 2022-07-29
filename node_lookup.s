@@ -11,9 +11,11 @@
 
     .global node_lookup               //make node_lookup global for linking to
     .type   node_lookup, %function    //define node_lookup to be a function
-    .equ 	FP_OFF, //FILL THIS 	  // fp offset distance from sp 
+    .equ 	FP_OFF, 28 	  // fp offset distance from sp 
 node_lookup:	
 // function prologue
+    push    {r4-r9, fp, lr}     
+    add     fp, sp, FP_OFF 
 
 //function body
 
