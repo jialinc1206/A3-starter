@@ -138,13 +138,63 @@ node *add_node(node *front, int year, int month, int day, int hour, int pm25,
  */
 void print_date_stats(node **table, unsigned long size, char *datestr) {
   // TODO: Implement print_data_stats
-  
+
+  long hashNum = hash(datestr);
+  node *row = table[hashNum];
+
+  int c = 0;
+  int line[4];
+
+  char *time = strtok(datestr, "-");
+  while(time != NULL) {
+    line[c] = atoi(time);
+    time = strtok(NULL, "-");
+    c++;
+  }
+  c = 0;
+
+  int sumTemp = 0, minTemp = 0, maxTemp = 0, minpm25 = 0, maxpm25 = 0, sumpm25 = 0, count = 0;
+
+  node *tempNode = row -> next;
+
+  do {
+    if(tempNode -> year == line[0]) {
+      if(tempNode -> month == line[1]) {
+        if(tempNode -> day == line[2]) {
+          count++;
+          sumpm25 += tempNode -> pm25;
+          sumTemp += tempNode -> temp;
+          if(tempNode -> pm25 > maxpm25) {
+            maxpm25 = tempNode -> pm25;
+          }
+          if(tempNode -> pm25 < minpm25) {
+            minpm25 = tempNode -> pm25;
+          }
+
+          if(tempNode -> temp > maxTemp) {
+            maxTemp = tempNode -> temp;
+          }
+          if(tempNode -> temp < minTemp) {
+            minTemp = tempNode -> temp;
+          }
+        }
+      }
+    } 
+    tempNode = tempNode -> next;
+  } while(tempNode -> next != NULL);
+
+  int avgpm25 = sumpm25/count;
+  int avgTemp = sumTemp/count;
   // Use the following formatting strings to print messages.
-  printf("Unable to find any data for the date %s.\n", /* TODO */);
-  printf("Minimum pm2.5: %d\tMaximum pm2.5: %d\tAverage pm2.5: %d\n",
-         /* TODO */, /* TODO */, /* TODO */);
-  printf("Minimum temp: %d\tMaximum temp: %d\tAverage temp: %d\n",
-         /* TODO */, /* TODO */, /* TODO */);
+  if(count == 0) {
+    fprintf(stdout, "Unable to find any data for the date %s.\n", datestr);
+  }
+  else {
+    printf("Minimum pm2.5: %d\tMaximum pm2.5: %d\tAverage pm2.5: %d\n",
+          minpm25, maxpm25, avgpm25);
+    printf("Minimum temp: %d\tMaximum temp: %d\tAverage temp: %d\n",
+          minTemp, maxTemp, avgTemp);
+  }
 }
 
 /*
@@ -160,6 +210,12 @@ int load_table(node **table, unsigned long size, char *filename) {
 	//char* table[TABLE_SIZE];
   size_t bufsize = 99;
   int line[6];
+  FILE *fp = fopen(filename, "r");
+
+  char timeStr[MAX_SIZE_DATESTR];
+  char time[MAX_SIZE_DATESTR];
+
+  int hashNum = 0;
 
 	// read input 1st line
   buffer = (char *)malloc(bufsize * sizeof(char));
@@ -169,7 +225,7 @@ int load_table(node **table, unsigned long size, char *filename) {
     exit(1);
   }
   
-  if(fgets(buffer, LINE_SIZE, filename) == NULL) {
+  if(fgets(buffer, LINE_SIZE, fp) == NULL) {
     perror("load_table filename open");
     free(buffer);
     exit(1);
@@ -188,7 +244,7 @@ int load_table(node **table, unsigned long size, char *filename) {
   }
   c = 0;
 
-  while(fgets(buffer, 100, tmpf) != NULL) {
+  while(fgets(buffer, 100, fp) != NULL) {
     token = strtok(buffer, ",");
       while(token != NULL) {
         if(strcmp(token, "NA") == 0) {
@@ -199,8 +255,35 @@ int load_table(node **table, unsigned long size, char *filename) {
       token = strtok(NULL, ",");
       c++;
       } 
+
+      sprintf(time, "%d", line[0]);
+      strcat(timeStr, time);
+      strcat(timeStr, "-");
+      sprintf(time, "%d", line[1]);
+      strcat(timeStr, time);
+      strcat(timeStr, "-");
+      sprintf(time, "%d", line[2]);
+      strcat(timeStr, time);
+          // printf("timeStr = %s\n", timeStr);
+
+      hashNum = hash(timeStr);
+      
+
+      if(node_lookup(table[hashNum], sprintf(time, "%d", line[0]), sprintf(time, "%d", line[1]), sprintf(time, "%d", line[2]), sprintf(time, "%d", line[3])) != NULL) {
+        fprintf(stderr, "load_table duplicate entry: %d-%d-%d %d\n", line[0], line[1], line[2], line[3]);
+        continue;
+      }
+
+      if(add_node(table[hashNum], sprintf(time, "%d", line[0]), sprintf(time, "%d", line[1]), sprintf(time, "%d", line[2]), sprintf(time, "%d", line[3]), sprintf(time, "%d", line[4]), sprintf(time, "%d", line[5])) == NULL) {
+        fprintf(stderr, "load_table could not add %s\n", timeStr);
+        continue;
+      }
+
+
+
     printf("load_table duplicate entry: %d-%d-%d %d\n", line[0], line[1], line[2], line[3]);
     c = 0;
+    timeStr[0] = '\0';
   }
 
   free(buffer);
@@ -214,11 +297,33 @@ int load_table(node **table, unsigned long size, char *filename) {
  */
 void print_info(node **table, unsigned long size) {
   // TODO: Implement print_info
-  printf("Table size: %lu\n", /* TODO */);
-  printf("Total entries: %lu\n", /* TODO */);
-  printf("Longest chain: %lu\n", /* TODO */);
-  printf("Shortest chain: %lu\n", /* TODO */);
-  printf("Empty buckets: %lu\n", /* TODO */);
+  long numNode = 0, maxNode = 0, minNode = TABLE_SIZE, count = 0, empty = 0;
+  node *tempNode;
+
+  for(long i = 0; i < size; i++) {
+    tempNode = table[i];
+    if(tempNode -> next == NULL) {
+      empty++;
+    }
+    while(tempNode -> next != NULL) {
+      count++;
+      tempNode = tempNode ->next;
+    }
+    numNode += count;
+    if(count > maxNode) {
+      maxNode = count;
+    }
+    if(count < minNode) {
+      minNode = count;
+    }
+
+  }
+
+  printf("Table size: %lu\n",TABLE_SIZE);
+  printf("Total entries: %lu\n", numNode);
+  printf("Longest chain: %lu\n", maxNode);
+  printf("Shortest chain: %lu\n", minNode);
+  printf("Empty buckets: %lu\n", empty);
 }
 
 /*

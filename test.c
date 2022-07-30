@@ -66,8 +66,21 @@ int main()
     }
     printf("load_table duplicate entry: %d-%d-%d %d\n", line[0], line[1], line[2], line[3]);
     c = 0;
+    char timeStr[11];
+    char time[5];
+    sprintf(time, "%d", line[0]);
+    strcat(timeStr, time);
+    strcat(timeStr, "-");
+    sprintf(time, "%d", line[1]);
+    strcat(timeStr, time);
+    strcat(timeStr, "-");
+    sprintf(time, "%d", line[2]);
+    strcat(timeStr, time);
+    printf("timeStr = %s\n", timeStr);
+    timeStr[0] = '\0';
   }
                 // printf("after while loop\n");
+
 
     return 0;
 }
