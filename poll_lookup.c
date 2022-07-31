@@ -211,6 +211,10 @@ int load_table(node **table, unsigned long size, char *filename) {
   size_t bufsize = 99;
   int line[6];
   FILE *fp = fopen(filename, "r");
+  if(fp == NULL) {
+    perror("load_table filename open");
+    exit(1);
+  }
 
   char timeStr[MAX_SIZE_DATESTR];
   char time[MAX_SIZE_DATESTR];
@@ -286,6 +290,7 @@ int load_table(node **table, unsigned long size, char *filename) {
     timeStr[0] = '\0';
   }
 
+  fclose(fp);
   free(buffer);
   return 0;
 }
