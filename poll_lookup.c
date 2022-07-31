@@ -307,7 +307,7 @@ int load_table(node **table, unsigned long size, char *filename) {
  */
 void print_info(node **table, unsigned long size) {
   // TODO: Implement print_info
-  unsigned long numNode = 0, maxNode = 0, minNode = TABLE_SIZE, count = 0, empty = 0, table = TABLE_SIZE;
+  unsigned long numNode = 0, maxNode = 0, minNode = TABLE_SIZE, count = 0, empty = 0, tableS = TABLE_SIZE;
   node *tempNode;
 
   for(unsigned long i = 0; i < size; i++) {
@@ -329,7 +329,7 @@ void print_info(node **table, unsigned long size) {
 
   }
 
-  printf("Table size: %lu\n",table);
+  printf("Table size: %lu\n",tableS);
   printf("Total entries: %lu\n", numNode);
   printf("Longest chain: %lu\n", maxNode);
   printf("Shortest chain: %lu\n", minNode);

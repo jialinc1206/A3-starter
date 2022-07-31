@@ -20,16 +20,17 @@ node_lookup:
 
 //function body
     add r4, fp, #4          // front pointer address
-    str r4, [fp, #-60]
+    str r4, [fp, #-28]
 
-.Lloop:
-    ldr r5, [fp, #-60]  
-    add r5, r5, #20
-    str r5, [fp, #-60] 
-    add r6, r5, #4        // year address
-    add r7, r5, #8        // month address
-    add r8, r5, #12       // day address
-    add r9, r5, #16       // hour address
+
+    ldr r5, [fp, #-28]  
+    ldr r6, [r5]
+    cmp r6, #0
+    beq .END
+    add r6, r5, #-32        // year address
+    add r7, r5, #-28        // month address
+    add r8, r5, #-24       // day address
+    add r9, r5, #-20      // hour address
 
     ldr r6, [r6]        //year
     ldr r7, [r7]        //month
@@ -46,9 +47,38 @@ node_lookup:
     beq .LEqual
     b .Lloop
 
-    str r0, [fp, #-60]
+.Lloop:
+    ldr r5, [fp, #-28]  
+    add r5, r5, #20
+    str r5, [fp, #-28]
+    ldr r6, [r5]
+    cmp r6, #0
+    beq .END
+    
+
+    add r6, r5, #-32        // year address
+    add r7, r5, #-28        // month address
+    add r8, r5, #-24       // day address
+    add r9, r5, #-20      // hour address
+
+    ldr r6, [r6]        //year
+    ldr r7, [r7]        //month
+    ldr r8, [r8]        //day
+    ldr r9, [r9]        //hour
+
+    cmp r6, r0
+    bne .Lloop
+    cmp r7, r1
+    bne .Lloop
+    cmp r8, r2
+    bne .Lloop
+    cmp r9, r3
+    beq .LEqual
+    b .Lloop
+.END:
+    str #0, [fp, #-28]
 .LEqual:
-    ldr r0, [fp, #-60]
+    ldr r0, [fp, #-28]
 
 
 
