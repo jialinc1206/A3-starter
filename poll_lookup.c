@@ -139,8 +139,11 @@ node *add_node(node *front, int year, int month, int day, int hour, int pm25,
 void print_date_stats(node **table, unsigned long size, char *datestr) {
   // TODO: Implement print_data_stats
 
-  long hashNum = hash(datestr);
-  node *row = table[hashNum];
+  unsigned long hashNum = hash(datestr);
+
+  unsigned long num = hashFun(size, hashNum);
+
+  node *row = table[num];
 
   int c = 0;
   int line[4];
@@ -219,7 +222,8 @@ int load_table(node **table, unsigned long size, char *filename) {
   char timeStr[MAX_SIZE_DATESTR];
   char time[MAX_SIZE_DATESTR];
 
-  int hashNum = 0;
+  unsigned long hashNum = 0;
+  unsigned long num = 0;
 
 	// read input 1st line
   buffer = (char *)malloc(bufsize * sizeof(char));
@@ -271,14 +275,15 @@ int load_table(node **table, unsigned long size, char *filename) {
           // printf("timeStr = %s\n", timeStr);
 
       hashNum = hash(timeStr);
+      num = hashFun(size, hashNum);
       
 
-      if(node_lookup(table[hashNum], sprintf(time, "%d", line[0]), sprintf(time, "%d", line[1]), sprintf(time, "%d", line[2]), sprintf(time, "%d", line[3])) != NULL) {
+      if(node_lookup(table[num], sprintf(time, "%d", line[0]), sprintf(time, "%d", line[1]), sprintf(time, "%d", line[2]), sprintf(time, "%d", line[3])) != NULL) {
         fprintf(stderr, "load_table duplicate entry: %d-%d-%d %d\n", line[0], line[1], line[2], line[3]);
         continue;
       }
 
-      if(add_node(table[hashNum], sprintf(time, "%d", line[0]), sprintf(time, "%d", line[1]), sprintf(time, "%d", line[2]), sprintf(time, "%d", line[3]), sprintf(time, "%d", line[4]), sprintf(time, "%d", line[5])) == NULL) {
+      if(add_node(table[num], sprintf(time, "%d", line[0]), sprintf(time, "%d", line[1]), sprintf(time, "%d", line[2]), sprintf(time, "%d", line[3]), sprintf(time, "%d", line[4]), sprintf(time, "%d", line[5])) == NULL) {
         fprintf(stderr, "load_table could not add %s\n", timeStr);
         continue;
       }
@@ -302,10 +307,10 @@ int load_table(node **table, unsigned long size, char *filename) {
  */
 void print_info(node **table, unsigned long size) {
   // TODO: Implement print_info
-  unsigned long numNode = 0, maxNode = 0, minNode = TABLE_SIZE, count = 0, empty = 0;
+  unsigned long numNode = 0, maxNode = 0, minNode = TABLE_SIZE, count = 0, empty = 0, table = TABLE_SIZE;
   node *tempNode;
 
-  for(long i = 0; i < size; i++) {
+  for(unsigned long i = 0; i < size; i++) {
     tempNode = table[i];
     if(tempNode -> next == NULL) {
       empty++;
@@ -324,7 +329,7 @@ void print_info(node **table, unsigned long size) {
 
   }
 
-  printf("Table size: %lu\n",TABLE_SIZE);
+  printf("Table size: %lu\n",table);
   printf("Total entries: %lu\n", numNode);
   printf("Longest chain: %lu\n", maxNode);
   printf("Shortest chain: %lu\n", minNode);
