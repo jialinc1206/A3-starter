@@ -11,7 +11,7 @@
 
     .global node_lookup               //make node_lookup global for linking to
     .type   node_lookup, %function    //define node_lookup to be a function
-    .equ 	FP_OFF, #60 	  // fp offset distance from sp 
+    .equ 	FP_OFF, 60 	  // fp offset distance from sp 
 node_lookup:	
 // function prologue
     push    {r4-r9, fp, lr}     
@@ -22,12 +22,10 @@ node_lookup:
     add r4, fp, #4          // front pointer address
     str r4, [fp, #-60]
 
-.LOOP:
-    cmp r4, 0
-    beq .ENDLOOP
-
-    ldr r5, [fp, #-60]      // load front pointer address
-
+.Lloop:
+    ldr r5, [fp, #-60]  
+    add r5, r5, #20
+    str r5, [fp, #-60] 
     add r6, r5, #4        // year address
     add r7, r5, #8        // month address
     add r8, r5, #12       // day address
@@ -39,26 +37,17 @@ node_lookup:
     ldr r9, [r9]        //hour
 
     cmp r6, r0
-    bne .CONT
+    bne .Lloop
     cmp r7, r1
-    bne .CONT
+    bne .Lloop
     cmp r8, r2
-    bne .CONT
+    bne .Lloop
     cmp r9, r3
-    bne .CONT
+    beq .LEqual
+    b .Lloop
 
-    b .EQUAL            // if equals
-
-.CONT  
-
-
-    add r5, r5, #20
-    str r5, [fp, #-60] 
-    .LOOP
-
-.ENDLOOP
-    str #0, [fp, #-60]
-.EQUAL
+    str r0, [fp, #-60]
+.LEqual:
     ldr r0, [fp, #-60]
 
 

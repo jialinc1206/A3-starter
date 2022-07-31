@@ -297,7 +297,7 @@ int load_table(node **table, unsigned long size, char *filename) {
  */
 void print_info(node **table, unsigned long size) {
   // TODO: Implement print_info
-  long numNode = 0, maxNode = 0, minNode = TABLE_SIZE, count = 0, empty = 0;
+  unsigned long numNode = 0, maxNode = 0, minNode = TABLE_SIZE, count = 0, empty = 0;
   node *tempNode;
 
   for(long i = 0; i < size; i++) {
